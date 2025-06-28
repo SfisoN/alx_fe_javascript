@@ -1,36 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dynamic Quote Generator</title>
-</head>
-<body>
-  <h1>Dynamic Quote Generator</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic Quote Generator</title>
+  </head>
+  <body>
+    <h1>Dynamic Quote Generator</h1>
 
+    <div
+      id="syncNotification"
+      style="
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: #ffd;
+        border: 1px solid #cc9;
+        padding: 10px;
+        display: none;
+        z-index: 999;
+      "
+    ></div>
 
-  <div id="quoteDisplay"></div>
+    <div id="quoteDisplay"></div>
 
-  <button id="newQuote">Show New Quote</button>
+    <button id="newQuote">Show New Quote</button>
 
+    <div>
+      <input type="text" id="newQuoteText" placeholder="Enter a new quote" />
+      <input
+        type="text"
+        id="newQuoteCategory"
+        placeholder="Enter quote category"
+      />
+      <button id="addQuoteButton">Add Quote</button>
+    </div>
 
-  <div>
-    <input type="text" id="newQuoteText" placeholder="Enter a new quote" />
-    <input type="text" id="newQuoteCategory" placeholder="Enter quote category" />
-    <button id="addQuoteButton">Add Quote</button>
-  </div>
+    <div>
+      <input type="file" id="importFile" accept=".json" />
+      <button id="exportQuotes">Export Quotes</button>
+    </div>
 
-  <div>
-    <input type="file" id="importFile" accept=".json" />
-    <button id="exportQuotes">Export Quotes</button>
-  </div>
+    <select id="categoryFilter" onchange="filterQuotes()">
+      <option value="all">All Categories</option>
+      <!-- Dynamically populated categories -->
+    </select>
 
-  <select id="categoryFilter" onchange="filterQuotes()">
-    <option value="all">All Categories</option>
-    <!-- Dynamically populated categories -->
-  </select>
-
-  
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
