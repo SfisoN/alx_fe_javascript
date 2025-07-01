@@ -74,9 +74,7 @@ function showRandomQuote() {
 
 // Populate category filter dropdown dynamically
 function populateCategories() {
-  // Extract unique categories
   const uniqueCategories = [...new Set(quotes.map((q) => q.category))];
-  // Clear all options except "all"
   categoryFilter.innerHTML = `<option value="all">All Categories</option>`;
   uniqueCategories.forEach((cat) => {
     const option = document.createElement("option");
@@ -84,7 +82,7 @@ function populateCategories() {
     option.textContent = cat;
     categoryFilter.appendChild(option);
   });
-  // Restore last selected filter
+
   const lastFilter = loadLastFilter();
   if ([...categoryFilter.options].some((o) => o.value === lastFilter)) {
     categoryFilter.value = lastFilter;
@@ -102,9 +100,7 @@ function filterQuotes() {
 // Add a new quote from input fields
 function addQuote() {
   const quoteText = document.getElementById("newQuoteText").value.trim();
-  const quoteCategory = document
-    .getElementById("newQuoteCategory")
-    .value.trim();
+  const quoteCategory = document.getElementById("newQuoteCategory").value.trim();
 
   if (!quoteText || !quoteCategory) {
     alert("Please fill in both the quote and category.");
@@ -128,6 +124,24 @@ function addQuote() {
     <p><strong>New Quote Added:</strong> "${newQuote.text}"</p>
     <p><em>Category:</em> ${newQuote.category}</p>
   `;
+}
+
+// Create Add Quote form dynamically (if not in HTML)
+function createAddQuoteForm(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const formHtml = `
+    <div>
+      <input type="text" id="newQuoteText" placeholder="Enter quote" />
+      <input type="text" id="newQuoteCategory" placeholder="Enter category" />
+      <button id="addQuoteButton">Add Quote</button>
+    </div>
+  `;
+  container.innerHTML = formHtml;
+
+  // Attach event listener to dynamically created button
+  document.getElementById("addQuoteButton").addEventListener("click", addQuote);
 }
 
 // Export quotes as JSON file
@@ -182,13 +196,10 @@ const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
 
 // Fetch quotes from server (simulate GET)
 async function fetchQuotesFromServer() {
-  // Note: JSONPlaceholder returns posts, simulate mapping
   const response = await fetch(SERVER_URL);
   if (!response.ok) throw new Error("Network response was not ok");
   const data = await response.json();
 
-  // Simulate server data as quotes with text and category fields
-  // For demo, take first 10 posts, convert title to text, userId as category
   return data.slice(0, 10).map((post) => ({
     text: post.title,
     category: "Server" + post.userId,
@@ -197,7 +208,6 @@ async function fetchQuotesFromServer() {
 
 // Post quotes to server (simulate POST)
 async function postQuotesToServer(quotesToPost) {
-  // JSONPlaceholder ignores posted data, but we simulate success
   const response = await fetch(SERVER_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -207,13 +217,11 @@ async function postQuotesToServer(quotesToPost) {
   return await response.json();
 }
 
-// Sync local quotes with server quotes, return true if conflicts resolved
+// Sync local quotes with server quotes
 function syncQuotes(serverQuotes) {
   let conflictsResolved = false;
-  // Build map for quick local lookup (text + category)
   const localMap = new Map(quotes.map((q) => [`${q.text}|${q.category}`, q]));
 
-  // Add or update quotes from server
   serverQuotes.forEach((sq) => {
     const key = `${sq.text}|${sq.category}`;
     if (!localMap.has(key)) {
@@ -250,18 +258,16 @@ async function periodicSync() {
 window.onload = () => {
   loadQuotes();
   populateCategories();
-
-  // Restore last filter and show quote
   filterQuotes();
 
-  // Attach event listeners
+  // Create the add quote form if needed
+  createAddQuoteForm("addQuoteFormContainer");
+
   newQuoteBtn.addEventListener("click", showRandomQuote);
-  addQuoteBtn.addEventListener("click", addQuote);
-  importFileInput.addEventListener("change", importFromJsonFile);
   exportQuotesBtn.addEventListener("click", exportToJsonFile);
+  importFileInput.addEventListener("change", importFromJsonFile);
   categoryFilter.addEventListener("change", filterQuotes);
 
-  // Start periodic syncing every 20s
   periodicSync();
   setInterval(periodicSync, 20000);
 };
